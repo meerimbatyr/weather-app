@@ -4,7 +4,7 @@ import "./app.css";
 /*this object will have your keys and the base urs*/
 /* please get your key from https://home.openweathermap.org/users/sign_up */
 const api = {
-  key: process.env.REACT_APP_API_KEY,
+  key: "f842afde2b36c118775f4b64e7a80d62",
   base: "https://api.openweathermap.org/data/2.5/",
 };
 
@@ -61,6 +61,7 @@ function App() {
     "Bremerton",
     "Bridgeport",
     "Brighton",
+    "Eureka",
   ];
   {
     /*you can add more cities here*/
@@ -99,15 +100,19 @@ function App() {
     setSelectedCity(event.target.value);
   };
   return (
-    <div className="container warm">
-      <div className=" app warm">
+    <div
+      className={
+        weather.main?.temp.toFixed() > 16 ? "container warm" : "container"
+      }
+    >
+      <div className={weather.main?.temp.toFixed() > 16 ? "app warm" : "app"}>
         <main>
           <div className="top">
             <div className="location">{selectedCity}</div>
             {/* render The city*/}
             <div>
               <div className="temp">
-                <h2>{weather.main?.temp.toFixed()}°C</h2>{" "}
+                <h2>{weather.main?.temp.toFixed()}°C</h2>
                 {/*render the temperature*/}
               </div>
               <div>
@@ -133,8 +138,6 @@ function App() {
                   return <option value={el}>{el}</option>;
                 })
               }
-
-              <option></option>
             </select>
             <br />
           </div>
