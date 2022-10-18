@@ -1,75 +1,17 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import "./app.css";
-/*this object will have your keys and the base urs*/
-/* please get your key from https://home.openweathermap.org/users/sign_up */
+import cities from "./data";
+
 const api = {
   key: "f842afde2b36c118775f4b64e7a80d62",
   base: "https://api.openweathermap.org/data/2.5/",
 };
 
 function App() {
-  const cities = [
-    "Select a City",
-    "Bishkek",
-    "california",
-    "Sonsonate",
-    "Moscow",
-    "Qatar",
-    "Aktau",
-    "Aberdeen",
-    "Abilene",
-    "Akron",
-    "Albany",
-    "Albuquerque",
-    "Alexandria",
-    "Allentown",
-    "Amarillo",
-    "Anaheim",
-    "Anchorage",
-    "Ann Arbor",
-    "Antioch",
-    "Apple Valley",
-    "Appleton",
-    "Arlington",
-    "Arvada",
-    "Asheville",
-    "Athens",
-    "Atlanta",
-    "Atlantic City",
-    "Augusta",
-    "Aurora",
-    "Austin",
-    "Bakersfield",
-    "Baltimore",
-    "Barnstable",
-    "Baton Rouge",
-    "Beaumont",
-    "Bel Air",
-    "Bellevue",
-    "Berkeley",
-    "Bethlehem",
-    "Billings",
-    "Birmingham",
-    "Bloomington",
-    "Boise",
-    "Boise City",
-    "Bonita Springs",
-    "Boston",
-    "Boulder",
-    "Bradenton",
-    "Bremerton",
-    "Bridgeport",
-    "Brighton",
-    "Eureka",
-  ];
-  {
-    /*you can add more cities here*/
-  }
-
-  // im giving you one useState that is with the start value of the cities index[1]
   const [selectedCity, setSelectedCity] = useState(cities[1]);
   const [weather, setWeather] = useState([]);
+
   const getWeatherData = async () => {
     const { data } = await axios.get(
       `${api.base}weather?q=${selectedCity}&units=metric&APPID=${api.key}`
@@ -82,23 +24,39 @@ function App() {
     getWeatherData();
   }, [selectedCity]);
 
-  // maybe after calling the API in use effect you will need to save the information in another useState
-  // like weather
+  const dateBuilder = (d) => {
+    console.log(d);
+    let months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    let days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    const day = days[d.getDay()];
+    const date = d.getDate();
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
 
-  // remeber every time the city changes you need to call the api with the new data
-  //here you will write your useEffect
-
-  /*create a fuction to call the api*/
-  /* here you have a model of the api*/
-  /* `${api.base}weather?q=${selectedCity}&units=metric&APPID=${api.key}`*/
-
-  // here is needed to filter the data that you aredy got from your API
-  //
-  // HINT !!!! maybe when you call the API the will be empty and you will have an error
-
-  const handleChange = (event) => {
-    setSelectedCity(event.target.value);
+    return `${day}, ${date} ${month}, ${year}`;
   };
+
   return (
     <div
       className={
@@ -108,36 +66,40 @@ function App() {
       <div className={weather.main?.temp.toFixed() > 16 ? "app warm" : "app"}>
         <main>
           <div className="top">
-            <div className="location">{selectedCity}</div>
-            {/* render The city*/}
-            <div>
-              <div className="temp">
-                <h2>{weather.main?.temp.toFixed()}°C</h2>
-                {/*render the temperature*/}
-              </div>
+            {typeof weather.main != "undefined" && (
               <div>
-                <div className="situation">
-                  <h3>{weather.weather && weather.weather[0].description}</h3>{" "}
-                  {/*render Situation*/}
+                <div className="location">
+                  {weather.name}, {weather.sys.country}
+                </div>
+                <div className="date">{dateBuilder(new Date())}</div>
+
+                <div>
+                  <div className="temp">
+                    <h2>{weather.main?.temp.toFixed()}°C</h2>
+                  </div>
+                  <div>
+                    <div className="situation">
+                      <h3>
+                        {weather.weather && weather.weather[0].description}
+                      </h3>{" "}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
           <div className="select-area">
-            {" "}
-            {/*create a selector to show the cities
-            on change you need to update your selectedCity
-*/}
             <select
               className="custom-select"
-              onChange={(event) => handleChange(event)}
+              onChange={(e) => setSelectedCity(e.target.value)}
             >
-              {
-                /* we need to map our cities in order to show the options */
-                cities.map((el) => {
-                  return <option value={el}>{el}</option>;
-                })
-              }
+              {cities.map((el, index) => {
+                return (
+                  <option value={el} key={index}>
+                    {el}
+                  </option>
+                );
+              })}
             </select>
             <br />
           </div>
